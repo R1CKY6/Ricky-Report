@@ -18,7 +18,7 @@
 5. Start the server.
 
 
-[Video Preview](https://www.youtube.com/watch?v=IgL302TZJxw)
+[Video Preview](https://www.youtube.com/watch?v=IgL302TZJxw)<br>
 [Forum CFX](https://forum.cfx.re/t/release-free-esx-qbcore-standalone-advanced-vinewood-sign-system/5196951)
 
 # Support
