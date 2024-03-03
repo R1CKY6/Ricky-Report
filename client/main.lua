@@ -5,33 +5,29 @@ if Framework ~= nil then
     sendingImage = false
     inStaffChat = false
     local configValueLoaded = false
-    local infoLoad = nil
-
-    Citizen.CreateThread(function()
-        while not infoLoad do
-            infoLoad = TriggerServerCallback('ricky-report:getMyInfo')
-            Citizen.Wait(0)
-        end
-        Wait(1000)
-        SendNUIMessage({
-            type = 'SET_MY_INFO',
-            id = GetPlayerServerId(PlayerId()),
-            identifier = infoLoad.identifier,
-            name = infoLoad.name
-        })
-        local staff = TriggerServerCallback('ricky-report:getStaffList')
-        SendNUIMessage({
-            type = 'UPDATE_STAFF',
-            staff = staff
-        })
-    end)
 
     RegisterCommand(Config.Command.openReportStaff.commandName, function(source, args, rawCommand)
+        
         local staff = TriggerServerCallback('ricky-report:ImStaff') or false
         if not staff then 
             return 
         end
+
+        local staffList = TriggerServerCallback('ricky-report:getStaffList')
+        SendNUIMessage({
+            type = 'UPDATE_STAFF',
+            staff = staffList
+        })
+
+
         if not configValueLoaded then 
+            local infoLoad = TriggerServerCallback('ricky-report:getMyInfo')
+            SendNUIMessage({
+                type = 'SET_MY_INFO',
+                id = GetPlayerServerId(PlayerId()),
+                identifier = infoLoad.identifier,
+                name = infoLoad.name
+            })
             SendNUIMessage({
                 type = "SET_CONFIGVALUE",
                 locales = Config.Locales,
@@ -59,7 +55,19 @@ if Framework ~= nil then
     end
 
     RegisterCommand(Config.Command.openReport.commandName, function(source, args, rawCommand)
+        local staffList = TriggerServerCallback('ricky-report:getStaffList')
+        SendNUIMessage({
+            type = 'UPDATE_STAFF',
+            staff = staffList
+        })
         if not configValueLoaded then 
+            local infoLoad = TriggerServerCallback('ricky-report:getMyInfo')
+            SendNUIMessage({
+                type = 'SET_MY_INFO',
+                id = GetPlayerServerId(PlayerId()),
+                identifier = infoLoad.identifier,
+                name = infoLoad.name
+            })
             SendNUIMessage({
                 type = "SET_CONFIGVALUE",
                 locales = Config.Locales,
