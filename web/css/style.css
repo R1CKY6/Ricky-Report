@@ -1,0 +1,186 @@
+@font-face {
+    font-family: 'Main Font';
+    src: url(../fonts/font.ttf);
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    user-select: none;
+    font-family: 'Main Font';
+    color: white;
+    font-style: normal;
+    font-weight: 700;
+    /* letter-spacing: 0.11em; */
+    overflow: hidden;
+}
+
+
+#app {
+    display: none;
+    position: absolute;
+    height: 100%;
+    width: 100%;
+    background-size: 100% 100%;
+    /* background: url('../img/StaffMenu\ Dashboard_001.png'); */
+    /* background: radial-gradient(63.56% 152.1% at 51.88% 65.97%, #000000 0%, rgba(0, 0, 0, 0.9) 100%); */
+}
+
+
+.iconShadow {
+    filter: drop-shadow(0vw 0.208vw 0.677vw #000);
+}
+
+
+.textShadow {
+    text-shadow: 0vw 0.208vw 0.677vw #000;
+}
+
+.containerShadow {
+    box-shadow: 0vw 0.208vw 2.083vw 0.417vw #0E0E0E;
+}
+
+
+::-webkit-scrollbar {
+    display: none;
+}
+
+@keyframes page {
+    0% {
+        transform: scale(0);
+    }
+    100% {
+        transform: scale(1);
+    }
+}
+
+.page-enter-active {
+    animation: page 0.3s ease forwards;
+}
+
+.page-leave-active {
+    animation: page 0.3s ease forwards reverse;
+}
+
+@keyframes message {
+    0% {
+        transform: translateY(3vw);
+    }
+    100% {
+        transform: translateY(0);
+    }
+}
+
+.msg {
+    animation: message 0.5s ease forwards;
+    border-radius: 0.78125vw;
+    border: 0.052vw solid #969696;
+    background: radial-gradient(100% 100% at 50.17% 100%, rgba(255, 255, 255, 0.20) 0%, rgba(0, 0, 0, 0.00) 100%), radial-gradient(100% 100% at 50.17% 0%, rgba(255, 255, 255, 0.20) 0%, rgba(0, 0, 0, 0.00) 100%), linear-gradient(0deg, rgba(0, 0, 0, 0.20) 0%, rgba(0, 0, 0, 0.20) 100%), #232222;
+}
+
+.msgPos {
+    cursor: pointer;
+    animation: message 0.5s ease forwards;
+    color: #fee92e;
+    border-radius: 0.78125vw;
+    border: 0.052vw solid #BDC026;
+    background: radial-gradient(100% 100% at 50.17% 100%, rgba(222, 204, 40, 0.40) 0%, rgba(0, 0, 0, 0.00) 100%), radial-gradient(100% 100% at 50.17% 0%, rgba(222, 204, 40, 0.40) 0%, rgba(0, 0, 0, 0.00) 100%), linear-gradient(0deg, rgba(0, 0, 0, 0.20) 0%, rgba(0, 0, 0, 0.20) 100%), #9C842C;
+}
+
+input:focus {
+    outline: none;
+}
+
+input::placeholder {
+    color: white;
+}
+
+
+textarea {
+    resize: none !important;
+}
+textarea:focus {
+    outline: none;
+}
+
+textarea::placeholder {
+    color: #FF964A;
+}
+
+
+
+#openChat {
+    background: rgba(36, 231, 184, 0.39);
+    transition: 0.5s;
+}
+
+#openChat:hover {
+    background: rgba(36, 231, 186, 0.615);
+    transition: 0.5s;
+}
+
+#openStatistics {
+    background: rgba(168, 36, 231, 0.39);
+    transition: 0.5s;
+}
+
+#openStatistics:hover {
+    background: rgba(168, 36, 233, 0.615);
+    transition: 0.5s;
+}
+
+#inputReportList::placeholder {
+    color: #50C4CB;
+}
+
+#inputReportListUser::placeholder {
+    color: #EF3C71;
+}
+
+#inputStaffList::placeholder {
+    color: #9A9998;
+}
+
+#annotation::placeholder {
+    color: #FF964A;
+}
+
+#openAllReports {
+    background: rgba(231, 36, 82, 0.39);
+    transition: 0.5s;
+}
+
+#openAllReports:hover {
+    background: rgba(231, 36, 84, 0.615);
+    transition: 0.5s;
+}
+
+@keyframes reportActionSelected {
+    0% {
+        transform: translateY(3vw);
+    }
+    100% {
+        transform: translateY(0);
+    }
+}
+
+.reportActionSelected-enter-active {
+    animation: reportActionSelected 0.3s ease forwards;
+}
+
+.reportActionSelected-leave-active {
+    animation: reportActionSelected 0.3s ease forwards reverse;
+}
+
+@keyframes rotate {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+.rotate {
+    animation: rotate 1.5s linear infinite;
+}

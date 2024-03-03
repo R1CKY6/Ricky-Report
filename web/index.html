@@ -1,0 +1,655 @@
+<html>
+    <head>
+        <title>Report System - Tech Development</title>
+        <meta charset='UTF-8'>
+        <meta name='viewport' content='width=device-width, initial-scale=1.0'>
+        <link rel="stylesheet" href="./css/style.css">
+    </head>
+    <body>
+
+        <div id="app">
+            <div class="h-full w-full flex items-center justify-center">
+
+                <!-- Text UI -->
+                <transition name="page">
+                    <div v-if="screenActive == 'send_image'" class="h-full w-full absolute flex justify-center">
+                        <div class="w-[30.365vw] h-[5.99vw] absolute top-[0] flex items-center justify-center">
+                            <img class="h-full w-full absolute" src="./img/sendPhotoContainer.png" alt="">
+                            <h1 class="text-[1.302vw] absolute top-[0.781vw] text-center">{{locales.send_photo}}</h1>
+                            <h1 class="text-[1.302vw] absolute bottom-[0.781vw] text-center">{{locales.return_back}}</h1>
+                        </div>
+                    </div>
+                </transition>
+
+                <div id="containerReport" style="box-shadow: 0vw 0.208vw 10.094vw 4.948vw rgba(0, 0, 0, 0.71); border-radius: 2.604vw;" class="w-[82.813vw] h-[49.063vw] absolute flex items-center justify-center">
+                    <img class="h-full w-full" src="./img/container.png" alt="">
+                    
+                    <!-- Left Bar -->
+                    <div
+                    style="
+                    border-radius: 1.5625vw;
+                    background: linear-gradient(0deg, rgba(0, 0, 0, 0.40) 0%, rgba(0, 0, 0, 0.00) 100%), radial-gradient(99.01% 99.01% at 50% 0.99%, rgba(114, 120, 116, 0.31) 0%, rgba(0, 0, 0, 0.00) 100%), #2E2D2D;
+                    box-shadow: 0vw 0vw 2.083vw 0.417vw #0E0E0E;"
+
+
+                    class="w-[17.5vw] h-[44.635vw] left-[2.135vw] absolute flex items-center justify-center">
+                    
+                    <img class="w-[10.781vw] top-[0.1vw] h-[10.781vw] absolute" :src="serverLogo" alt="">
+
+
+                    <h1 style="
+                    background: linear-gradient(180deg, #B0B0B0 0%, #464746 100%);
+                    background-clip: text;
+                    -webkit-background-clip: text;
+                    -webkit-text-fill-color: transparent;"
+
+                    class="absolute left-[0.99vw] top-[10.417vw] text-[1.042vw]"
+                    >{{locales.actions}}</h1>
+
+
+                    <div class="h-[25.292vw] w-[15.521vw] absolute top-[12.24vw]" style="z-index: 10;">
+                        <div v-if="playerStaff()" class="h-full w-full">
+                            <div @click="changeActivePage(v.locales)" :style="screenActive == v.locales ? 'background: #161616' : 'background : none'" v-for="(v,k) in staffAction" class="duration-[0.4s] w-full h-[3.542vw] rounded-[0.781vw] mb-[1.042vw] flex items-center justify-center cursor-pointer">
+                                <h1 class="text-[1.042vw] absolute left-[4.115vw]">{{locales[v.locales]}}</h1>
+                                <img class="absolute left-[1.042vw] w-[1.302vw] iconShadow" :src="'./img/icon/'+v.icon+'.png'" alt="">
+                            </div>
+                        </div>
+                        <div v-else class="h-full w-full">
+                            <div @click="changeActivePage(v.locales)" :style="screenActive == v.locales ? 'background: #161616' : 'background : none'" v-for="(v,k) in userAction" class="duration-[0.4s] w-full h-[3.542vw] rounded-[0.781vw] mb-[1.042vw] flex items-center justify-center cursor-pointer">
+                                <h1 class="text-[1.042vw] absolute left-[4.115vw]">{{locales[v.locales]}}</h1>
+                                <img class="absolute left-[1.042vw] w-[1.302vw] iconShadow" :src="'./img/icon/'+v.icon+'.png'" alt="">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div @click="closeNui()" style="z-index: 1;" class="cursor-pointer h-[3.542vw] w-[15.521vw] absolute bottom-[0.938vw] bg-[#A73D36] rounded-[0.781vw] flex items-center justify-center">
+                        <h1 class="text-[1.04167vw] absolute left-[4.115vw]">{{locales.close}}</h1>
+                        <img class="absolute left-[1.042vw] w-[1.302vw] iconShadow" src="./img/icon/close.png" alt="">
+                    </div>
+
+                    
+                    </div>
+
+
+                    <!-- Container Destro -->
+
+
+                    <transition name="page">
+                        <div v-if="screenActive=='create_new_report'" class="h-full w-full absolute">
+                            <h1 class="text-[1.823vw] textShadow absolute left-[42.865vw] text-center top-[2.083vw] text-center h-[4vw] pr-[1vw] pl-[1vw]">{{locales.create_new_report}}</h1>
+
+                            <img class="h-[6.875vw] w-[6.875vw] absolute left-[47.813vw] top-[6.458vw] iconShadow" src="./img/create_new_report.png" alt="">
+
+                            <div class="h-[5vw] w-[20vw] absolute top-[26.406vw] left-[41.25vw]">
+                                <img class="h-full w-full absolute" src="./img/input_title.png" alt="">
+                                <input v-model="newReportSettings.title" :placeholder="locales.title" type="text" class="h-full text-[1.563vw] absolute w-full bg-[transparent] text-center">
+                            </div>
+
+                            <div @click="createNewReport()" class="cursor-pointer h-[5vw] w-[20vw] absolute bottom-[2.24vw] left-[41.25vw]">
+                                <img class="absolute" src="./img/input_title.png" alt="">
+                                <h1 class="h-full absolute text-[1.563vw] w-full flex items-center justify-center textShadow">
+                                    {{locales.create}}
+                                </h1>
+                            </div>
+
+                            <div class="w-[53.646vw] h-[5vw] absolute top-[16.198vw] flex left-[24.427vw]">
+                                <div @click="changeNewReportSettings('type', 'player')" class="relative h-full w-[16.146vw] duration-[1s] rounded-[1.042vw] mr-[2.604vw] cursor-pointer">
+                                    <img class="absolute" v-if="newReportSettings.type == 'player'" src="./img/type_selected.png" alt="">
+                                    <img class="absolute" v-else src="./img/type_unselected.png" alt="">
+                                    <h1 :style="newReportSettings.type == 'player' ? 'color: white' : 'color: gray'" class="duration-[1s] absolute text-[1.563vw] h-full textShadow w-full flex items-center justify-center">
+                                        {{locales.player}}
+                                    </h1>
+                                </div>
+                                <div @click="changeNewReportSettings('type', 'bug')" class="relative h-full w-[16.146vw] duration-[1s] rounded-[1.042vw] mr-[2.604vw] cursor-pointer">
+                                    <img class="absolute" v-if="newReportSettings.type == 'bug'" src="./img/type_selected.png" alt="">
+                                    <img class="absolute" v-else src="./img/type_unselected.png" alt="">
+                                    <h1 :style="newReportSettings.type == 'bug' ? 'color: white' : 'color: gray'" class="duration-[1s] absolute text-[1.563vw] h-full textShadow w-full flex items-center justify-center">
+                                        {{locales.bug}}
+                                    </h1>
+                                </div>
+                                <div @click="changeNewReportSettings('type', 'question')" class="relative h-full w-[16.146vw] duration-[1s] rounded-[1.042vw] cursor-pointer">
+                                    <img class="absolute" v-if="newReportSettings.type == 'question'" src="./img/type_selected.png" alt="">
+                                    <img class="absolute" v-else src="./img/type_unselected.png" alt="">
+                                    <h1 :style="newReportSettings.type == 'question' ? 'color: white' : 'color: gray'" class="duration-[1s] absolute text-[1.563vw] h-full textShadow w-full flex items-center justify-center">
+                                        {{locales.question}}
+                                    </h1>
+                                </div>
+                            </div>
+                        </div>
+                    </transition>
+
+                    <transition name="page">
+                        <div v-if="screenActive == 'staff_list'" class="h-full w-full absolute">
+                            <transition name="page">
+                                <div v-if="screenActive2 == ''" class="h-full w-full absolute">
+                                    <h1 class="text-[1.823vw] textShadow absolute left-[46.083vw] text-center top-[2.083vw] text-center h-[4vw] pr-[1vw] pl-[1vw]">{{locales.staff_list}}</h1>
+                            
+                                    <div class="w-[22.083vw] h-[4.688vw] absolute left-[40.208vw] top-[5.938vw]">
+                                        <img class="absolute h-full w-full" src="./img/input_stafflist.png" alt="">
+                                        <input id="inputStaffList" v-model="staffName" :placeholder="locales.search_from_name" type="text" class="h-full w-[19vw] p-[1vw] absolute bg-[transparent] text-[1.5625vw] text-[#9A9998]">
+                                    </div>
+        
+                                    <div style="overflow-y: auto;" class="h-[34.896vw] w-[41.719vw] absolute bottom-[2.24vw] left-[30.365vw]">
+                                        <div :style="canUserOpenStaffStats ? 'cursor: pointer' : 'cursor: normal'" @click="openStaffInfo(v.identifier)" v-for="(v,k) in staffList()" class="h-[6.927vw] w-full mb-[2.396vw] relative flex items-center justify-center ">
+                                            <img class="absolute h-full w-full" src="./img/staff.png" alt="">
+                                            <h1 class="text-[2.083vw] left-[6.094vw] absolute">{{v.name}}</h1>
+        
+                                            <div :style="v.available ? 'filter: drop-shadow(0vw 0.208vw 1.042vw rgba(40, 203, 36, 0.79))' : 'filter: drop-shadow(0vw 0.208vw 1.042vw rgba(239, 0, 0, 0.79)); background-color : #EF0000'" class="h-[2.188vw] absolute w-[2.188vw] rounded-full bg-[#3EEF00] left-[1.198vw]"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </transition>
+                            <transition name="page">
+                                <div v-if="screenActive2 == 'staff_info'" class="h-full w-full absolute">
+
+                                    <img @click="changeActivePage2('')" class="w-[5.573vw] cursor-pointer h-[5.573vw] absolute left-[21.927vw] top-[2.24vw] iconShadow" src="./img/turn_back.png" alt="">
+
+                                    <h1 class="text-[1.823vw] textShadow absolute left-[46.083vw] text-center top-[2.083vw] text-center h-[4vw] pr-[1vw] pl-[1vw]">{{locales.statistics}}</h1>
+
+
+                                    <div class="h-[25.521vw] w-[57.24vw] flex absolute top-[12.083vw] left-[21.771vw]">
+                                        <div class="h-full w-[17.24vw] rounded-[2.083vw] mr-[2.76vw] relative flex items-center justify-center">
+                                            <img class="absolute h-full" src="./img/report_claimed.png" alt="">
+                                            <h1 class="text-[1.563vw] absolute top-[2.25vw] textShadow w-full text-center h-[5vw]">{{locales.report_claimed}}</h1>
+                                            <h1 class="text-[3.125vw] absolute bottom-[1.25vw] textShadow w-full text-center h-[5vw]">{{statistic['report_claimed']}}</h1>
+                                        </div>
+
+                                        <div class="h-full w-[17.24vw] rounded-[2.083vw] mr-[2.76vw] relative flex items-center justify-center">
+                                            <img class="absolute h-full" src="./img/report_closed.png" alt="">
+                                            <h1 class="text-[1.563vw] absolute top-[2.25vw] textShadow w-full text-center h-[5vw]">{{locales.report_closed}}</h1>
+                                            <h1 class="text-[3.125vw] absolute bottom-[1.25vw] textShadow w-full text-center h-[5vw]">{{statistic['report_closed']}}</h1>
+                                        </div>
+
+                                        <div class="h-full w-[17.24vw] rounded-[2.083vw] mr-[2.76vw] flex items-center justify-center">
+                                            <img class="absolute h-full" src="./img/sent_messages.png" alt="">
+
+                                            <h1 class="text-[1.563vw] absolute top-[2.25vw] textShadow w-full text-center h-[5vw]">{{locales.sent_messages}}</h1>
+                                            <h1 class="text-[3.125vw] absolute bottom-[1.25vw] textShadow w-full text-center h-[5vw]">{{statistic['sent_messages']}}</h1>
+                                        </div>
+                                    </div>
+                                </div>
+                            </transition>
+                        
+                        </div>
+                    </transition>
+                    
+                    <transition name="page">
+                        <div v-if="screenActive == 'report_claimed'" class="h-full w-full absolute">
+                            <h1 class="text-[1.823vw] textShadow absolute left-[46.083vw] text-center top-[2.083vw] text-center h-[4vw] pr-[1vw] pl-[1vw]">{{locales.report_claimed}}</h1>
+
+                            <div class="w-[22.083vw] h-[4.688vw] absolute left-[40.208vw] top-[5.938vw]">
+                                <img class="absolute h-full w-full" src="./img/input_reportlist.png" alt="">
+                                <input id="inputReportList" v-model="reportName" :placeholder="locales.search_from_title" type="text" class="h-full w-[19vw] p-[1vw] absolute bg-[transparent] text-[1.5625vw] text-[#50C4CB]">
+                            </div>
+
+                            <div style="overflow-y: auto;" class="h-[34.896vw] w-[41.719vw] absolute bottom-[2.24vw] left-[30.365vw]">
+                                <div @click="openReport(v.id)" v-for="(v,k) in filterReport(true)" class="cursor-pointer h-[6.927vw] w-full mb-[2.396vw] relative flex items-center justify-center ">
+                                    <img class="absolute h-full w-full" src="./img/report.png" alt="">
+                                    <h1 v-if="v.closed" class="text-[1.563vw] left-[6.094vw] absolute">{{v.title}} ({{locales.closed}})</h1>
+                                    <h1 v-else class="text-[1.563vw] left-[6.094vw] absolute">{{v.title}}</h1>
+
+                                    <img class="absolute w-[3vw] right-[1.198vw]" :src="'./img/type_'+v.type+'.png'" alt="">
+
+                                    <div :style="v.claimed ? 'filter: drop-shadow(0vw 0.208vw 1.042vw rgba(40, 203, 36, 0.79))' : 'filter: drop-shadow(0vw 0.208vw 1.042vw rgba(239, 0, 0, 0.79)); background-color : #EF0000'" class="h-[2.188vw] absolute w-[2.188vw] rounded-full bg-[#3EEF00] left-[1.198vw]"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </transition>
+
+                    <transition name="page">
+                        <div v-if="(screenActive == 'report_list' || screenActive == 'report_claimed' || screenActive == 'dashboard' || screenActive == 'staff_list') && screenActive2 == 'loading_information'" class="h-full w-full flex items-center justify-center absolute">
+                            <h1 class="text-[2.604vw] text-center absolute left-[36.927vw] top-[20.052vw]">{{locales.loading_information}}</h1>
+
+                            <img class="rotate h-[5.417vw] w-[5.417vw] absolute top-[24.844vw] left-[48.49vw]" src="./img/loadingInformation.png" alt="">
+                        </div>
+                    </transition>
+
+                    <transition name="page">
+                        <div v-if="screenActive == 'report_list'" class="h-full w-full absolute">
+                            <transition name="page">
+                                <div v-if="screenActive2 == ''" class="h-full w-full flex items-center justify-center absolute">
+                                    <h1 class="text-[1.823vw] textShadow absolute left-[46.083vw] text-center top-[2.083vw] text-center h-[4vw] pr-[1vw] pl-[1vw]">{{locales.report_list}}</h1>
+
+                                    <div class="w-[22.083vw] h-[4.688vw] absolute left-[40.208vw] top-[5.938vw]">
+                                        <img class="absolute h-full w-full" src="./img/input_reportlist.png" alt="">
+                                        <input id="inputReportList" v-model="reportName" :placeholder="locales.search_from_title" type="text" class="h-full w-[19vw] p-[1vw] absolute bg-[transparent] text-[1.5625vw] text-[#50C4CB]">
+                                    </div>
+
+                                    <div style="overflow-y: auto;" class="h-[34.896vw] w-[41.719vw] absolute bottom-[2.24vw] left-[30.365vw]">
+                                        <div @click="openReport(v.id)" v-for="(v,k) in filterReport()" class="cursor-pointer h-[6.927vw] w-full mb-[2.396vw] relative flex items-center justify-center ">
+                                            <img class="absolute h-full w-full" src="./img/report.png" alt="">
+                                            <h1 v-if="v.closed" class="text-[1.563vw] left-[6.094vw] absolute">{{v.title}} ({{locales.closed}})</h1>
+                                            <h1 v-else class="text-[1.563vw] left-[6.094vw] absolute">{{v.title}}</h1>
+
+                                            <img class="absolute w-[3vw] right-[1.198vw]" :src="'./img/type_'+v.type+'.png'" alt="">
+
+                                            <div :style="v.claimed ? 'filter: drop-shadow(0vw 0.208vw 1.042vw rgba(40, 203, 36, 0.79))' : 'filter: drop-shadow(0vw 0.208vw 1.042vw rgba(239, 0, 0, 0.79)); background-color : #EF0000'" class="h-[2.188vw] absolute w-[2.188vw] rounded-full bg-[#3EEF00] left-[1.198vw]"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </transition>
+                            <transition name="page">
+                                <div v-if="(screenActive == 'report_list' || screenActive == 'report_claimed') && screenActive2 != '' && screenActive2 != 'loading_information'" class="h-full w-full flex items-center justify-center absolute">
+                                    <h1 class="text-[1.823vw] textShadow absolute left-[47.583vw] text-center top-[2.083vw] text-center h-[4vw] pr-[1vw] pl-[1vw]">{{reportSelected.title}}</h1>
+
+                                    <img v-if="reportActionSelected == 4" @click="changeReportActionSelected(0)" style="z-index: 1;" class="w-[5vw] cursor-pointer h-[5vw] absolute left-[21.771vw] top-[5.417vw] iconShadow" src="./img/turn_back.png" alt="">
+                                    <img v-else @click="changeActivePage2('')" style="z-index: 1;" class="w-[5vw] cursor-pointer h-[5vw] absolute left-[21.771vw] top-[5.417vw] iconShadow" src="./img/turn_back.png" alt="">
+
+
+                                    <div v-if="playerStaff()" style="z-index: 1;" class="flex w-[49.74vw] h-[5vw] absolute left-[30.938vw] top-[5.417vw]">
+                                        <div @click="changeReportActionSelected(0)" class="h-full w-[15.885vw] mr-[1.042vw] relative cursor-pointer">
+                                            <img class="absolute h-full w-full" src="./img/user_info.png" alt="">
+                                            <h1 class="h-full w-full textShadow absolute flex items-center justify-center text-[1.458vw]">{{locales.user_info}}</h1>
+
+                                            <transition name="reportActionSelected">
+                                                <div v-if="reportActionSelected == 0" style="border-radius: 0.52083vw 0.52083vw 0vw 0vw; box-shadow: 0vw 0.208vw 0.625vw 0.156vw #FFF;" class="h-[0.521vw] w-[5.677vw] left-[5.104vw] absolute bottom-[0] bg-[white]"></div>
+                                            </transition>
+                                        </div>
+                                        <div @click="changeReportActionSelected(1)" class="h-full w-[15.885vw] mr-[1.042vw] relative cursor-pointer">
+                                            <img class="absolute h-full w-full" src="./img/chat.png" alt="">
+                                            <h1 class="h-full w-full textShadow absolute flex items-center justify-center text-[1.458vw]">{{locales.chat}}</h1>
+                                            <transition name="reportActionSelected">
+                                                <div v-if="reportActionSelected == 1" style="border-radius: 0.52083vw 0.52083vw 0vw 0vw; box-shadow: 0vw 0.208vw 0.625vw 0.156vw #FFF;" class="h-[0.521vw] w-[5.677vw] left-[5.104vw] absolute bottom-[0] bg-[white]"></div>
+                                            </transition>
+                                        </div>
+                                        <div @click="changeReportActionSelected(2)" class="h-full w-[15.885vw] relative cursor-pointer">
+                                            <img class="absolute h-full w-full" src="./img/actions.png" alt="">
+                                            <h1 class="h-full w-full textShadow absolute flex items-center justify-center text-[1.458vw]">{{locales.actions}}</h1>
+                                            <transition name="reportActionSelected">
+                                                <div v-if="reportActionSelected == 2" style="border-radius: 0.52083vw 0.52083vw 0vw 0vw; box-shadow: 0vw 0.208vw 0.625vw 0.156vw #FFF;" class="h-[0.521vw] w-[5.677vw] left-[5.104vw] absolute bottom-[0] bg-[white]"></div>
+                                            </transition>
+                                        </div>
+                                    </div>
+
+                                    <transition name="page">
+                                        <div v-if="reportActionSelected == 2" class="h-full w-full flex items-center justify-center absolute">
+                                            <div class="h-[35.521vw] w-[58.906vw] absolute left-[21.771vw] top-[11.302vw]">
+                                                <img class="h-full w-full absolute" src="./img/container_actions.png" alt="">
+                                                <h1 class="w-full h-[3vw] absolute top-[0.377vw] flex items-center justify-center textShadow text-center text-[1.823vw]">{{locales.report_actions}}</h1>
+                                                <h1 class="w-full h-[3vw] absolute top-[18.01vw] flex items-center justify-center textShadow text-center text-[1.823vw]">{{locales.user_actions}}</h1>
+
+                                                <div @click="action('claim')" class="h-[11.406vw] w-[10.677vw] absolute left-[16.563vw] top-[4.583vw] containerShadow cursor-pointer rounded-[1.563vw]">
+                                                    <img class="h-full w-full absolute" src="./img/action_claim.png" alt="">
+                                                    <transition name="reportActionSelected">
+                                                        <h1 v-if="!claimedReport()" class="text-[#6A20C7] h-full w-full textShadow flex pb-[0.6vw] items-end justify-center text-[1.302vw] absolute">{{locales.claim}}</h1>
+                                                    </transition>
+                                                    <transition name="reportActionSelected">
+                                                        <h1 v-if="claimedReport()" class="text-[#6A20C7] h-full w-full textShadow flex pb-[0.6vw] items-end justify-center text-[1.302vw] absolute">{{locales.claimed}}</h1>
+                                                    </transition>
+                                                </div>
+
+                                                <div :style="reportSelected.closed == false ? 'filter: grayscale(0%); cursor: pointer' : 'filter: grayscale(100%); cursor: normal'" @click="action('closeReport')" class="h-[11.406vw] w-[10.677vw] absolute left-[31.719vw] top-[4.583vw] containerShadow rounded-[1.563vw]">
+                                                    <img class="h-full w-full absolute" src="./img/action_close.png" alt="">
+                                                    <h1 v-if="reportSelected.closed == false" class="text-[#E73C3C] h-full w-full textShadow flex pb-[0.6vw] items-end justify-center text-[1.302vw] absolute">{{locales.close}}</h1>
+                                                    <h1 v-else class="text-[#E73C3C] h-full w-full textShadow flex pb-[0.6vw] items-end justify-center text-[1.302vw] absolute">{{locales.closed}}</h1>
+                                                </div>
+
+                                                <div :style="checkIdentifierOnline ? 'filter: grayscale(0%); cursor: pointer' : 'filter: grayscale(100%); cursor: normal'" @click="action('goto')" class="h-[11.406vw] w-[10.677vw] absolute left-[8.958vw] bottom-[1.198vw] containerShadow rounded-[1.563vw]">
+                                                    <img class="h-full w-full absolute" src="./img/action_goto.png" alt="">
+                                                    <h1 class="text-[#48E961] h-full w-full textShadow flex pb-[0.6vw] items-end justify-center text-[1.302vw] absolute">{{locales.goto}}</h1>
+                                                </div>
+                                            
+                                                <div :style="checkIdentifierOnline ? 'filter: grayscale(0%); cursor: pointer' : 'filter: grayscale(100%); cursor: normal'" @click="action('bring')" class="h-[11.406vw] w-[10.677vw] absolute left-[24.115vw] bottom-[1.198vw] containerShadow rounded-[1.563vw]">
+                                                    <img class="h-full w-full absolute" src="./img/action_bring.png" alt="">
+                                                    <h1 class="text-[#E6E948] h-full w-full textShadow flex pb-[0.6vw] items-end justify-center text-[1.302vw] absolute">{{locales.bring}}</h1>
+                                                </div>
+
+                                                <div :style="checkIdentifierOnline ? 'filter: grayscale(0%); cursor: pointer' : 'filter: grayscale(100%); cursor: normal'" @click="action('freeze')" class="h-[11.406vw] w-[10.677vw] absolute left-[39.271vw] bottom-[1.198vw] containerShadow rounded-[1.563vw]">
+                                                    <img class="h-full w-full absolute" src="./img/action_freeze.png" alt="">
+                                                    <h1 class="text-[#14F1FF] h-full w-full textShadow flex pb-[0.6vw] items-end justify-center text-[1.302vw] absolute">{{locales.freeze}}</h1>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </transition>
+
+                                    <transition name="page">
+                                        <div v-if="reportActionSelected == 4" class="h-full w-full flex items-center justify-center absolute">
+                                            <!-- <img @click="changeReportActionSelected(0)" class="w-[5.573vw] cursor-pointer h-[5.573vw] absolute left-[21.771vw] top-[12.083vw]" src="./img/turn_back.png" alt=""> -->
+
+                                            <div class="w-[22.083vw] h-[4.688vw] absolute left-[40.208vw] top-[12.969vw]">
+                                                <img class="absolute h-full w-full" src="./img/input_reportlistuser.png" alt="">
+                                                <input id="inputReportListUser" v-model="reportName" :placeholder="locales.search_from_title" type="text" class="h-full w-[19vw] p-[1vw] absolute bg-[transparent] text-[1.5625vw] text-[#EF3C71]">
+                                            </div>
+
+                                            <div class="h-[25.573vw] w-[41.719vw] left-[30.365vw] top-[18.958vw] absolute" style="overflow-y: auto;">
+                                               <div @click="openReport(v.id)" v-for="v in getReportsOfUser(reportSelected.userInfo.identifier)" class="cursor-pointer h-[6.927vw] w-full mb-[2.396vw] relative flex items-center justify-center">
+                                                <img class="absolute h-full w-full" src="./img/report_user.png" alt="">
+                                                <h1 class="text-[1.563vw] left-[6.094vw] absolute">{{v.title}} <span v-if="reportSelected.id == v.id">({{locales.current}})</span></h1>
+
+                                                <img class="absolute w-[3vw] right-[1.198vw]" :src="'./img/type_'+v.type+'.png'" alt="">
+    
+                                                <div :style="v.claimed ? 'filter: drop-shadow(0vw 0.208vw 1.042vw rgba(40, 203, 36, 0.79))' : 'filter: drop-shadow(0vw 0.208vw 1.042vw rgba(239, 0, 0, 0.79)); background-color : #EF0000'" class="h-[2.188vw] absolute w-[2.188vw] rounded-full bg-[#3EEF00] left-[1.198vw]"></div>
+                                               </div>
+                                            </div>
+                                        </div>
+                                    </transition>
+
+                                    <transition name="page">
+                                        <div v-if="reportActionSelected == 0" class="h-full w-full flex items-center justify-center absolute">
+                                            <div class="w-[58.906vw] h-[35.521vw] absolute bottom-[2.24vw] right-[2.135vw]">
+                                                <img class="absolute h-full w-full" src="./img/info_container.png" alt="">
+
+                                                <h1 class="absolute top-[1.771vw] left-[9.167vw] text-[1.302vw]">{{reportSelected.userInfo.name}}</h1>
+
+                                                <div style="border: 0.052vw solid #8D8989;" class="h-[6.146vw] absolute w-[6.146vw] top-[2.917vw] left-[1.771vw] rounded-full flex items-center justify-center">
+                                                    <div style="border: 0.052vw solid #8D8989; background: rgba(87, 83, 83, 0.48);" class="h-[5.521vw] w-[5.521vw] rounded-full flex items-center justify-center">
+                                                        <img class="w-[4.604vw]" :src="reportSelected.userInfo.avatar || serverLogo" alt="">
+                                                    </div>
+                                                </div>
+
+                                                <div class="h-[14.427vw] w-[22.969vw] absolute bottom-[4.531vw] left-[1.771vw]">
+                                                    <img class="absolute h-full w-full" src="./img/view_all_report.png" alt="">
+                                                    <h1 class="absolute text-[1.042vw] w-full h-[2vw] pl-[0.5vw] pr-[0.5vw] top-[0.938vw] left-[7vw] textShadow">{{locales.view}}</h1>
+                                                    <h1 class="absolute text-[1.563vw] w-full h-[4vw] pl-[0.5vw] pr-[0.5vw] top-[2.76vw] left-[7vw] textShadow">{{locales.all_reports}}</h1>
+
+                                                    <div @click="viewUserReports()" style="border: 0.104vw solid #FF4A81;" id="openAllReports" class="h-[4.635vw] w-[13.438vw] absolute left-[4.74vw] bottom-[0.938vw] cursor-pointer rounded-[1.042vw]">
+                                                        <h1 class="h-full w-full flex items-center justify-center text-[1.302vw] textShadow text-[#FF4A81]">{{locales.open}}</h1>
+                                                    </div>
+                                                </div>
+                                                <div class="h-[14.427vw] w-[22.969vw] absolute bottom-[4.531vw] right-[1.771vw]">
+                                                    <img class="absolute h-full w-full" src="./img/set_annotation.png" alt="">
+                                                    <h1 class="absolute text-[1.042vw] w-full h-[2vw] pl-[0.5vw] pr-[0.5vw] top-[0.938vw] left-[7vw] textShadow">{{locales.set}}</h1>
+                                                    <h1 class="absolute text-[1.563vw] w-full h-[4vw] pl-[0.5vw] pr-[0.5vw] top-[2.76vw] left-[7vw] textShadow">{{locales.annotation}}</h1>
+
+                                                    <div style="background: rgba(231, 71, 36, 0.39); border: 0.104vw solid #FF764A;" class="h-[7.813vw] w-[20.26vw] border rounded-[1.042vw] absolute left-[1.354vw] bottom-[0.938vw]">
+                                                       <textarea onchange="app.saveAnnotation(app.reportSelected.userInfo.identifier, event)" v-model="reportSelected.userInfo.annotation" id="annotation" class="h-full w-full bg-[transparent] p-[0.5vw] text-[#FF964A] textShadow text-[1.302vw]" :placeholder="locales.add_note"></textarea>
+                                                    </div>
+                                                </div>
+
+                                                <h1 class="flex items-center text-[1.042vw] w-full h-[2.3vw] textShadow absolute top-[4.167vw] left-[8.667vw] pl-[0.5vw] pr-[0.5vw] textShadow">{{locales.license}}: {{reportSelected.userInfo.license || locales.not_found}} <img v-if="reportSelected.userInfo.license" id="license" @click="copyLicense('license')" class=" w-[0.938vw] h-[1.042vw] cursor-pointer ml-[1vw]" src="./img/copy.png" alt=""> </h1>
+                                                <h1 class="flex items-center text-[1.042vw] w-full h-[2.3vw] textShadow absolute top-[6.51vw] left-[8.667vw] pl-[0.5vw] pr-[0.5vw] textShadow">{{locales.steam}}: {{reportSelected.userInfo.steam || locales.not_found}} <img v-if="reportSelected.userInfo.steam" id="steam" @click="copyLicense('steam')" class=" w-[0.938vw] h-[1.042vw] cursor-pointer ml-[1vw]" src="./img/copy.png" alt=""></h1>
+                                                <h1 class="flex items-center text-[1.042vw] w-full h-[2.3vw] textShadow absolute top-[8.854vw] left-[8.667vw] pl-[0.5vw] pr-[0.5vw] textShadow">{{locales.discord}}: {{reportSelected.userInfo.discord || locales.not_found}} <img v-if="reportSelected.userInfo.discord" id="discord" @click="copyLicense('discord')" class=" w-[0.938vw] h-[1.042vw] cursor-pointer ml-[1vw]" src="./img/copy.png" alt=""></h1>
+                                                <div :style="checkIdentifierOnline ? 'background: #3EEF00; filter: drop-shadow(0vw 0.208vw 1.042vw rgba(40, 203, 36, 0.79));' : 'background: #EF0000; filter: drop-shadow(0vw 0.208vw 1.042vw rgba(239, 0, 0, 0.79));'" class="h-[2.135vw] w-[2.135vw] rounded-full absolute right-[1.771vw] top-[1.771vw]"></div>                                            </div>
+                                        </div>
+                                    </transition>
+
+                                    <transition name="page">
+                                        <div v-if="reportActionSelected == 1" class="h-full w-full flex items-center justify-center absolute">
+                                            <div class="w-[58.906vw] h-[35.521vw] absolute bottom-[2.188vw] left-[21.771vw]">
+                                                <img  class="h-full w-full absolute" src="./img/container_chat.png" alt="">
+
+                                                <transition name="page">
+                                                    <div style="z-index: 1;" v-if="viewImage.enable" class="h-full w-full absolute rounded-[2.604vw]">
+                                                        <img class="h-full w-full absolute" :src="viewImage.url" alt="">
+
+                                                        <div @click="viewFullImage('', true)" style="border-radius: 0px 0px 0px 1.042vw; background: rgba(77, 74, 74, 0.591);" class="h-[4.792vw] w-[4.792vw] absolute right-[0] top-[0] flex items-center justify-center cursor-pointer">
+                                                            <img class="h-[2.5vw] w-[2.5vw] absolute iconShadow" src="./img/close.png" alt="">
+                                                        </div>
+                                                    </div>
+                                                </transition>
+
+                                                <div class="bottom-[0] absolute left-[1.51vw] h-[6.094vw] w-[36.354vw] textShadow">
+                                                    <input :disabled="reportSelected.closed" id="message" :placeholder="reportSelected.closed == false ? locales.type_something : locales.report_closed2" type="text" class="h-full w-full bg-[transparent] text-[1.458vw]">
+                                                </div>
+        
+                                                <div v-if="reportSelected.closed == false" @click="sendMessageToReport('message')" class="h-[4.74vw] w-[4.74vw] absolute right-[2.448vw] cursor-pointer bottom-[0.660vw]">
+                                                    <img class="h-full w-full" src="./img/sendMessage.png" alt="">
+                                                </div>
+
+                                                <div v-if="reportSelected.closed == false" @click="sendMessageToReport('position')" class="h-[4.74vw] w-[4.74vw] absolute right-[8.333vw] cursor-pointer bottom-[0.660vw]">
+                                                    <img class="h-full w-full" src="./img/sendPosition.png" alt="">
+                                                </div>
+
+                                                <div v-if="reportSelected.closed == false" @click="sendMessageToReport('image')" class="h-[4.74vw] w-[4.74vw] absolute right-[14.219vw] cursor-pointer bottom-[0.660vw]">
+                                                    <img class="h-full w-full" src="./img/sendImage.png" alt="">
+                                                </div>
+        
+                                                <div id="chatReport" style="overflow-y: auto;" class="h-[25.938vw] w-[54.896vw] absolute left-[1.51vw] top-[1.875vw]">
+                                                    <div v-for="v in reportSelected.messages" class="w-full h-max relative mb-[1.354vw]">
+                                                        <div v-if="v.fromIdentifier == getMyInfo('identifier', v.fromIdentifier)" class="h-full w-full">
+                                                            <h1 class="text-[1.042vw] relative right-[0] flex justify-end">{{v.name}}</h1>
+        
+                                                            <!-- Message -->
+                                                            <div v-if="v.type == 'message'" class="h-max w-full relative flex justify-end mt-[0.51vw]">
+                                                                <div class="h-auto max-w-[29vw] msg relative right-[0] pt-[0.5vw] pb-[0.5vw] pl-[1vw] pr-[1vw] text-[1.198vw]">
+                                                                    {{v.content}}
+                                                                </div>
+                                                            </div>
+
+                                                            <!-- Position -->
+                                                            <div v-if="v.type == 'position'" class="h-max w-full relative flex justify-end mt-[0.51vw]">
+                                                                <div @click="setWaypoint(v.position)" class="h-auto max-w-[29vw] msgPos relative right-[0] pt-[0.5vw] pb-[0.5vw] pl-[1vw] pr-[1vw] text-[1.198vw]">
+                                                                    {{locales.set_pos}}
+                                                                </div>
+                                                            </div>
+
+                                                            <!-- Image -->
+                                                            <div @click="viewFullImage(v.url)" v-if="v.type == 'image'" class="left-[29.792vw] h-[15vw] w-[25vw] relative flex justify-end cursor-pointer">
+                                                                <img style="border-radius: 1.563vw;" class="border h-full w-full absolute" :src="v.url" alt="">
+                                                            </div>
+                                                        </div>
+                                                        <div v-if="!(v.fromIdentifier == getMyInfo('identifier'))" class="h-full w-full">
+                                                            <h1 class="text-[1.042vw] relative right-[0] flex justify-start">{{v.name}}</h1>
+        
+                                                            <!-- Message -->
+                                                            <div v-if="v.type == 'message'" class="h-max w-full relative flex justify-start mt-[0.51vw]">
+                                                                <div class="h-auto max-w-[29vw] msg relative right-[0] pt-[0.5vw] pb-[0.5vw] pl-[1vw] pr-[1vw] text-[1.198vw]">
+                                                                    {{v.content}}
+                                                                </div>
+                                                            </div>
+
+                                                            <!-- Position -->
+                                                            <div v-if="v.type == 'position'" class="h-max w-full relative flex justify-start mt-[0.51vw]">
+                                                                <div @click="setWaypoint(v.position)" class="h-auto max-w-[29vw] msgPos relative right-[0] pt-[0.5vw] pb-[0.5vw] pl-[1vw] pr-[1vw] text-[1.198vw]">
+                                                                    {{locales.set_pos}}
+                                                                </div>
+                                                            </div>
+
+                                                            <!-- Image -->
+                                                            <div @click="viewFullImage(v.url)" v-if="v.type == 'image'" class="h-[15vw] w-[25vw] relative flex justify-end cursor-pointer">
+                                                                <img style="border-radius: 1.563vw;" class="h-full w-full absolute border" :src="v.url" alt="">
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </transition>
+                                </div>
+                            </transition>
+                        </div>
+                    </transition>
+                    <transition name="page">
+                        <div v-if="screenActive == 'dashboard'" class="h-full w-full absolute">
+                            <transition name="page">
+                                <div v-if="screenActive2 == 'statistics'" class="h-full w-full flex items-center justify-center absolute">
+                                    <img @click="changeActivePage2('')" class="w-[5.573vw] cursor-pointer h-[5.573vw] absolute left-[21.927vw] top-[2.24vw] iconShadow" src="./img/turn_back.png" alt="">
+
+                                    <h1 class="text-[1.823vw] textShadow absolute left-[46.083vw] text-center top-[2.083vw] text-center h-[4vw] pr-[1vw] pl-[1vw]">{{locales.statistics}}</h1>
+
+                                    <div class="h-[25.521vw] w-[57.24vw] flex absolute top-[12.083vw] left-[21.771vw]">
+                                        <div class="h-full w-[17.24vw] rounded-[2.083vw] mr-[2.76vw] relative flex items-center justify-center">
+                                            <img class="absolute h-full" src="./img/report_claimed.png" alt="">
+                                            <h1 class="text-[1.563vw] absolute top-[2.25vw] textShadow w-full text-center h-[5vw]">{{locales.report_claimed}}</h1>
+                                            <h1 class="text-[3.125vw] absolute bottom-[1.25vw] textShadow w-full text-center h-[5vw]">{{statistic['report_claimed']}}</h1>
+                                        </div>
+
+                                        <div class="h-full w-[17.24vw] rounded-[2.083vw] mr-[2.76vw] relative flex items-center justify-center">
+                                            <img class="absolute h-full" src="./img/report_closed.png" alt="">
+                                            <h1 class="text-[1.563vw] absolute top-[2.25vw] textShadow w-full text-center h-[5vw]">{{locales.report_closed}}</h1>
+                                            <h1 class="text-[3.125vw] absolute bottom-[1.25vw] textShadow w-full text-center h-[5vw]">{{statistic['report_closed']}}</h1>
+                                        </div>
+
+                                        <div class="h-full w-[17.24vw] rounded-[2.083vw] mr-[2.76vw] flex items-center justify-center">
+                                            <img class="absolute h-full" src="./img/sent_messages.png" alt="">
+
+                                            <h1 class="text-[1.563vw] absolute top-[2.25vw] textShadow w-full text-center h-[5vw]">{{locales.sent_messages}}</h1>
+                                            <h1 class="text-[3.125vw] absolute bottom-[1.25vw] textShadow w-full text-center h-[5vw]">{{statistic['sent_messages']}}</h1>
+                                        </div>
+                                    </div>
+                                </div>
+                            </transition>
+                            <transition name="page">
+                                <div v-if="screenActive2 == 'staff_chat'" class="h-full w-full flex items-center justify-center absolute">
+                                    <img @click="changeActivePage2('')" class="w-[5.573vw] cursor-pointer h-[5.573vw] absolute left-[21.927vw] top-[2.24vw] iconShadow" src="./img/turn_back.png" alt="">
+                                    <h1 class="text-[1.823vw] textShadow absolute left-[46.083vw] text-center top-[2.083vw] text-center h-[4vw] pr-[1vw] pl-[1vw]">{{locales.staff_chat}}</h1>
+
+                                    <div class="w-[58.906vw] h-[35.521vw] absolute bottom-[2.188vw] left-[21.771vw]">
+                                        <img class="h-full w-full absolute" src="./img/container_chat.png" alt="">
+
+                                        <transition name="page">
+                                            <div style="z-index: 1;" v-if="viewImage.enable" class="h-full w-full absolute rounded-[2.604vw]">
+                                                <img class="h-full w-full absolute" :src="viewImage.url" alt="">
+
+                                                <div @click="viewFullImage('', true)" style="border-radius: 0px 0px 0px 1.042vw; background: rgba(77, 74, 74, 0.591);" class="h-[4.792vw] w-[4.792vw] absolute right-[0] top-[0] flex items-center justify-center cursor-pointer">
+                                                    <img class="h-[2.5vw] w-[2.5vw] absolute iconShadow" src="./img/close.png" alt="">
+                                                </div>
+                                            </div>
+                                        </transition>
+
+                                        <div class="bottom-[0] absolute left-[1.51vw] h-[6.094vw] w-[36.354vw] textShadow">
+                                            <input id="staffMessage" :placeholder="locales.type_something" type="text" class="h-full w-full bg-[transparent] text-[1.458vw]">
+                                        </div>
+
+                                        <div @click="sendMessageToChatStaff('message')" class="h-[4.74vw] w-[4.74vw] absolute right-[2.448vw] cursor-pointer bottom-[0.660vw]">
+                                            <img class="h-full w-full" src="./img/sendMessage.png" alt="">
+                                        </div>
+
+                                        <div @click="sendMessageToChatStaff('position')" class="h-[4.74vw] w-[4.74vw] absolute right-[8.333vw] cursor-pointer bottom-[0.660vw]">
+                                            <img class="h-full w-full" src="./img/sendPosition.png" alt="">
+                                        </div>
+
+                                        <div @click="sendMessageToChatStaff('image')" class="h-[4.74vw] w-[4.74vw] absolute right-[14.219vw] cursor-pointer bottom-[0.660vw]">
+                                            <img class="h-full w-full" src="./img/sendImage.png" alt="">
+                                        </div>
+
+                                        <div id="chatStaff" style="overflow-y: auto;" class="h-[25.938vw] w-[54.896vw] absolute left-[1.51vw] top-[1.875vw]">
+                                            <div v-for="v in staffChat" class="w-full h-max relative mb-[1.354vw]">
+                                                <div v-if="v.fromIdentifier == getMyInfo('identifier')" class="h-full w-full">
+                                                    <h1 class="text-[1.042vw] relative flex justify-end">{{v.name}}</h1>
+
+                                                    <!-- Message -->
+                                                    <div v-if="v.type == 'message'" class="h-max w-full relative flex justify-end mt-[0.51vw]">
+                                                        <div class="h-auto max-w-[29vw] msg relative right-[0] pt-[0.5vw] pb-[0.5vw] pl-[1vw] pr-[1vw] text-[1.198vw]">
+                                                            {{v.content}}
+                                                        </div>
+                                                    </div>
+
+                                                    <!-- Position -->
+                                                    <div v-if="v.type == 'position'" class="h-full w-full relative flex justify-end mt-[0.51vw]">
+                                                        <div @click="setWaypoint(v.position)" class="h-auto max-w-[29vw] msgPos relative right-[0] pt-[0.5vw] pb-[0.5vw] pl-[1vw] pr-[1vw] text-[1.198vw]">
+                                                            {{locales.set_pos}}
+                                                        </div>
+                                                    </div>
+
+                                                    <!-- Image -->
+                                                    <div @click="viewFullImage(v.url)" v-if="v.type == 'image'" class="left-[29.792vw] h-[15vw] w-[25vw] relative flex justify-end cursor-pointer">
+                                                        <img style="border-radius: 1.563vw;" class="h-full w-full absolute border" :src="v.url" alt="">
+                                                    </div>
+                                                </div>
+                                                <div v-else class="h-full w-full">
+                                                    <h1 class="text-[1.042vw] relative flex justify-start">{{v.name}}</h1>
+
+                                                    <!-- Message -->
+                                                    <div v-if="v.type == 'message'" class="h-max w-full relative flex justify-start mt-[0.51vw]">
+                                                        <div class="h-auto max-w-[29vw] msg relative right-[0] pt-[0.5vw] pb-[0.5vw] pl-[1vw] pr-[1vw] text-[1.198vw]">
+                                                            {{v.content}}
+                                                        </div>
+                                                    </div>
+
+                                                    <!-- Position -->
+                                                    <div v-if="v.type == 'position'" class="h-full w-full relative flex justify-start mt-[0.51vw]">
+                                                        <div @click="setWaypoint(v.position)" class="h-auto max-w-[29vw] msgPos relative right-[0] pt-[0.5vw] pb-[0.5vw] pl-[1vw] pr-[1vw] text-[1.198vw]">
+                                                            {{locales.set_pos}}
+                                                        </div>
+                                                    </div>
+
+                                                    <!-- Image -->
+                                                    <div @click="viewFullImage(v.url)" v-if="v.type == 'image'" class="h-[15vw] w-[25vw] relative flex justify-start cursor-pointer">
+                                                        <img style="border-radius: 1.563vw;" class="h-full w-full absolute border" :src="v.url" alt="">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </transition>
+                            <transition name="page">
+                                <!-- Dashboard -->
+                                <div v-if="screenActive2 == ''" class="h-full w-full flex items-center justify-center absolute">
+                                    <h1 class="textShadow text-[1.563vw] absolute top-[2.24vw] left-[21.271vw] text-center h-[4vw] pl-[0.5vw] pr-[0.5vw]">{{locales.welcome_back}},</h1>
+                                    <h1 class="textShadow text-[2.083vw] absolute top-[4.427vw] left-[21.271vw] text-center h-[4vw] pl-[0.5vw] pr-[0.5vw]">{{getMyInfo('name')}}</h1>
+            
+            
+                                    <div class="w-[22.969vw] h-[4.844vw] absolute top-[25.208vw] left-[39.74vw] cursor-pointer containerShadow rounded-[0.781vw]">
+                                        <div v-if="myInfo.available" @click="changeAvailable()" class="h-full w-full flex items-center justify-center">
+                                            <img class="absolute" src="./img/available.png" alt="">
+                                            <h1 class="text-[#53CB50] absolute text-[1.563vw] textShadow h-full w-full items-center flex justify-center">{{locales.you_are_available}}</h1>
+                                        </div>
+            
+                                        <div v-if="!myInfo.available" @click="changeAvailable()" class="h-full w-full flex items-center justify-center">
+                                            <img class="absolute" src="./img/noAvailable.png" alt="">
+                                            <h1 class="text-[#CB5050] absolute text-[1.563vw] textShadow h-full w-full items-center flex justify-center">{{locales.you_are_not_available}}</h1>
+                                        </div>
+                                    </div>
+            
+                                    <!-- Latest Report -->
+                                    <div class="w-[22.969vw] h-[14.427vw] absolute containerShadow left-[21.271vw] top-[8.438vw] rounded-[2.083vw] flex items-center justify-center">
+                                        <img class="absolute" src="./img/latest_report.png" alt="">
+            
+                                        <h1 class="text-[1.042vw] textShadow absolute left-[7vw] h-[4vw] text-center pl-[0.5vw] pr-[0.5vw] top-[0.938vw]">{{locales.latest}}</h1>
+                                        <h1 class="text-[1.563vw] textShadow absolute left-[7vw] h-[4vw] text-center pl-[0.5vw] pr-[0.5vw] top-[2.76vw]">{{locales.report}}</h1>
+            
+                                        <div class="h-[7.188vw] w-[20.469vw] absolute bottom-[0.938vw]">
+                                            <div @click="openReport(v.id)" v-for="v in latestReport()" class="cursor-pointer w-full h-[3.385vw] bg-[#6AB2C1] border-[0.104vw] border-[#9DEEFF] mb-[0.417vw] rounded-[0.521vw]">
+                                                <h1 class="h-full text-[1.042vw] textShadow w-full flex items-center justify-start pl-[1.094vw]">{{v.title}}</h1>
+                                            </div>
+                                        </div>
+                                    </div>
+            
+                                    <!-- Staff Available -->
+                                    <div class="w-[22.969vw] h-[14.427vw] absolute containerShadow right-[2.135vw] top-[8.438vw] rounded-[2.083vw] flex items-center justify-center">
+                                        <img class="absolute" src="./img/staff_available.png" alt="">
+            
+                                        <h1 class="text-[1.042vw] textShadow absolute left-[7vw] h-[4vw] text-center pl-[0.5vw] pr-[0.5vw] top-[0.938vw]">{{locales.staff}}</h1>
+                                        <h1 class="text-[1.563vw] textShadow absolute left-[7vw] h-[4vw] text-center pl-[0.5vw] pr-[0.5vw] top-[2.76vw]">{{locales.available}}</h1>
+            
+                                        <div style="overflow-y: auto;" class="h-[7.188vw] w-[20.469vw] absolute bottom-[0.938vw]">
+                                            <div v-for="v in staffAvailable()" class="w-full h-[3.385vw] bg-[#BFC16A] border-[0.104vw] border-[#FDFF9D] mb-[0.417vw] rounded-[0.521vw]">
+                                                <h1 class="h-full text-[1.042vw] textShadow w-full flex items-center justify-start pl-[1.094vw]">{{v.name}} - {{v.id}}</h1>
+                                            </div>
+                                        </div>
+                                    </div>
+            
+                                    <!-- Staff Chat -->
+                                    <div class="w-[22.969vw] h-[14.427vw] absolute containerShadow right-[2.135vw] bottom-[2.24vw] rounded-[2.083vw] flex items-center justify-center">
+                                        <img class="absolute" src="./img/staff_chat.png" alt="">
+        
+                                        <h1 class="text-[1.042vw] textShadow absolute left-[7vw] h-[4vw] text-center pl-[0.5vw] pr-[0.5vw] top-[0.938vw]">{{locales.staff}}</h1>
+                                        <h1 class="text-[1.563vw] textShadow absolute left-[7vw] h-[4vw] text-center pl-[0.5vw] pr-[0.5vw] top-[2.76vw]">{{locales.chat}}</h1>
+        
+                                        <div id="openChat" @click="changeActivePage2('staff_chat')" class="cursor-pointer h-[4.635vw] w-[13.438vw] rounded-[1.042vw] absolute bottom-[0.938vw] border-[0.104vw] border-[#4AFFBE]">
+                                            <h1 class="textShadow text-[#4AFFBE] text-[1.302vw] h-full w-full flex items-center justify-center">{{locales.open}}</h1>
+                                        </div>
+                                    </div>
+            
+                                    <!-- Statistics -->
+                                    <div class="w-[22.969vw] h-[14.427vw] absolute containerShadow left-[21.271vw] bottom-[2.24vw] rounded-[2.083vw] flex items-center justify-center">
+                                        <img class="absolute" src="./img/statistics.png" alt="">
+        
+                                        <h1 class="text-[1.042vw] textShadow absolute left-[7vw] h-[4vw] text-center pl-[0.5vw] pr-[0.5vw] top-[0.938vw]">{{locales.your}}</h1>
+                                        <h1 class="text-[1.563vw] textShadow absolute left-[7vw] h-[4vw] text-center pl-[0.5vw] pr-[0.5vw] top-[2.76vw]">{{locales.statistics}}</h1>
+        
+                                        <div id="openStatistics" @click="changeActivePage2('statistics')" class="cursor-pointer h-[4.635vw] w-[13.438vw] rounded-[1.042vw] absolute bottom-[0.938vw] border-[0.104vw] border-[#B04AFF]">
+                                            <h1 class="textShadow text-[#B04AFF] text-[1.302vw] h-full w-full flex items-center justify-center">{{locales.open}}</h1>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+
+                            </div>
+                            </transition>
+                    </transition>
+
+
+                </div>
+            </div>
+        </div>
+        
+
+        <script src='https://code.jquery.com/jquery-3.1.1.min.js'></script>
+        <script src='https://cdn.jsdelivr.net/npm/vue@2.6.12/dist/vue.js'></script>
+        <script src="./js/script.js"></script>
+        <script src='https://cdn.tailwindcss.com'></script>
+    </body>
+</html>
